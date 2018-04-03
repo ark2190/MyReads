@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {withRouter} from 'react-router-dom'
+import {withRouter, Link} from 'react-router-dom'
 import * as BooksAPI from '../BooksAPI'
 import Bookshelf from './Bookshelf'
 
@@ -101,9 +101,10 @@ class MyBooks extends Component {
                         )}
                     </div>
                 </div>
-                <div className="open-search">
-                    <a onClick={() => this.setState({showSearchPage: true})}>Add a book</a>
-                </div>
+                <Link
+                    to='/search'
+                    className="open-search"
+                >Add a book</Link>
             </div>
         )
     }
