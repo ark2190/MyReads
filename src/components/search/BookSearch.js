@@ -8,20 +8,40 @@ class BookSearch extends Component {
         searchKeyword: '',
         result: [],
     };
+    timeout = null;
 
     searchBooks(keyword) {
         if (keyword && keyword.trim().length > 0) {
             BooksAPI.search(keyword.trim().toLowerCase())
-                .then(books => {
-                    if (this.state.searchKeyword === keyword) {
-                        this.setState({result: books});
+                .then(response => {
+                    if (response.hasOwnProperty('error')) {
+                        this.setState({result: []});
+                    } else {
+                        if (this.state.searchKeyword === keyword) {
+                            const result = this.associateShelfWithBooks(response);
+                            this.setState({result: result});
+                            console.log('result', this.state.result);
+                        }
                     }
-                    console.log('result', this.state.result);
                 })
         } else {
             this.setState({result: []})
         }
     };
+
+    associateShelfWithBooks(searchResults) {
+        const myBooks = [...this.props.books];
+        const myBooksShelfMap = {};
+        myBooks.forEach((b) => {
+            myBooksShelfMap[b.id] = b.shelf;
+        });
+
+        const searchResult = [...searchResults];
+        searchResult.forEach((book) => {
+            book.shelf = myBooksShelfMap.hasOwnProperty(book.id) ? myBooksShelfMap[book.id] : 'none';
+        });
+        return searchResult;
+    }
 
     goBackHandler = () => {
         this.props.history.goBack();
@@ -30,10 +50,21 @@ class BookSearch extends Component {
     onTextChangeHandler = (event) => {
         const searchKeyword = event.target.value;
         this.setState({searchKeyword: searchKeyword});
-        this.searchBooks(searchKeyword);
+
+        /* Clear previous timeout to avoid unwanted http request as the user is still typing. */
+        if (this.timeout !== null) {
+            console.log('Clearing timeout');
+            clearTimeout(this.timeout);
+        }
+
+        /* Set a timeout of 600 ms to let user type the whole query phrase before hitting the http request.
+         This will avoid the potential overlapping of unwanted http requests. */
+        this.timeout = setTimeout(() => this.searchBooks(searchKeyword), 600);
     };
 
     onShelfChangedHandler = (book, newShelf) => {
+        this.props.onUpdateShelf(book, newShelf);
+        this.goBackHandler();
     };
 
     render() {
@@ -44,14 +75,6 @@ class BookSearch extends Component {
                 <div className="search-books-bar">
                     <a className="close-search" onClick={this.goBackHandler}>Close</a>
                     <div className="search-books-input-wrapper">
-                        {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
                         <input
                             type="text"
                             placeholder="Search by title or author"
