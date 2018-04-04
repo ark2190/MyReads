@@ -48,7 +48,6 @@ class BooksApp extends React.Component {
                 }
 
                 this.setState({myBooks: books});
-                console.log(`'${book.title}' moved from ${book.shelf} to ${newShelf}.`);
             });
     };
 
