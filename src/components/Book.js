@@ -18,13 +18,20 @@ const Book = ({book, onShelfChanged}) => {
         }
     };
 
+    let thumbnail = book.imageLinks
+        ? (book.imageLinks.smallThumbnail
+            ? book.imageLinks.smallThumbnail
+            : book.imageLinks.thumbnail)
+        : null;
+    thumbnail = thumbnail ? `url("${thumbnail}")` : '#e1e1e1';
+
     return (
         <div className="book">
             <div className="book-top">
                 <div className="book-cover" style={{
                     width: 128,
                     height: 193,
-                    backgroundImage: `url("${book.imageLinks.smallThumbnail}")`
+                    backgroundImage: thumbnail
                 }}/>
                 <div className="book-shelf-changer">
                     <select
@@ -42,8 +49,12 @@ const Book = ({book, onShelfChanged}) => {
                     </select>
                 </div>
             </div>
-            <div className="book-title">{book.title}</div>
-            <div className="book-authors">{book.authors && book.authors.length > 0 ? book.authors[0] : ""}</div>
+            <div className="book-title">
+                {book.title}
+            </div>
+            <div className="book-authors">
+                {book.authors && book.authors.length > 0 ? book.authors[0] : "N/A"}
+            </div>
         </div>
     )
 };
