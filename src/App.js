@@ -8,7 +8,8 @@ import * as BooksAPI from "./BooksAPI";
 class BooksApp extends React.Component {
 
     state = {
-        myBooks: []
+        myBooks: [],
+        isLoadingBooks: false
     };
 
     componentDidMount() {
@@ -19,16 +20,17 @@ class BooksApp extends React.Component {
      * Fetch all the books from the server and sort them into respective shelfs.
      * Those not belonging to any of the shelves are omitted.
      */
-    getAllBooks() {
-        BooksAPI.getAll().then((books) => {
-            this.setState({myBooks: books});
-        })
-    }
+    getAllBooks = () => {
+        this.setState({isLoadingBooks: true});
+
+        BooksAPI.getAll()
+            .then((books) => this.setState({myBooks: books, isLoadingBooks: false}))
+            .catch(() => this.setState({isLoadingBooks: false}))
+    };
 
     updateShelfHandler = (book, newShelf) => {
         BooksAPI.update(book, newShelf)
-            .then((response) => {
-                console.log('Update', response);
+            .then(() => {
                 let books = [...this.state.myBooks];
 
                 if (newShelf === 'none') {
@@ -52,17 +54,20 @@ class BooksApp extends React.Component {
     };
 
     render() {
+        const {myBooks, isLoadingBooks} = this.state;
+
         return (
             <div className="app">
                 <Route exact path='/search' render={() => (
                     <BookSearch
-                        books={this.state.myBooks}
+                        books={myBooks}
                         onUpdateShelf={(book, newShelf) => this.updateShelfHandler(book, newShelf)}
                     />
                 )}/>
                 <Route exact path='/' render={() => (
                     <MyBooks
-                        books={this.state.myBooks}
+                        isLoading={isLoadingBooks}
+                        books={myBooks}
                         onUpdateShelf={(book, newShelf) => this.updateShelfHandler(book, newShelf)}
                     />
                 )}/>

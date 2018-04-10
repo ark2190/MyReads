@@ -1,8 +1,15 @@
 import React, {Component} from 'react'
 import {Link, withRouter} from 'react-router-dom'
 import Bookshelf from './Bookshelf'
+import PropTypes from 'prop-types'
 
 class MyBooks extends Component {
+    static propTypes = {
+        isLoadingBooks: PropTypes.bool,
+        books: PropTypes.array.isRequired,
+        onUpdateShelf: PropTypes.func
+    };
+
     state = {
         currentlyReading: [],
         wantToRead: [],
@@ -46,35 +53,28 @@ class MyBooks extends Component {
     };
 
     render() {
-        const {currentlyReading, wantToRead, read} = this.state;
+        const shelves = [
+            {title: 'Currently Reading', shelf: 'currentlyReading', books: this.state.currentlyReading},
+            {title: 'Want To Read', shelf: 'wantToRead', books: this.state.currentlyReading},
+            {title: 'Read', shelf: 'read', books: this.state.currentlyReading}
+        ];
 
         return (
             <div className="list-books">
                 <div className="list-books-title">
                     <h1>MyReads</h1>
                 </div>
-                <div className="list-books-content">
-                    <div>
-                        {currentlyReading.length > 0 && (
+                {!this.props.isLoadingBooks && (
+                    <div className="list-books-content">
+                        {shelves.map(shelf => (
                             <Bookshelf
-                                title="Currently Reading"
-                                books={currentlyReading}
+                                key={shelf.shelf}
+                                title={shelf.title}
+                                books={shelf.books}
                                 onShelfChanged={(books, newShelf) => this.onShelfChangedHandler(books, newShelf)}/>
-                        )}
-                        {wantToRead.length > 0 && (
-                            <Bookshelf
-                                title="Want to Read"
-                                books={wantToRead}
-                                onShelfChanged={(books, newShelf) => this.onShelfChangedHandler(books, newShelf)}/>
-                        )}
-                        {read.length > 0 && (
-                            <Bookshelf
-                                title="Read"
-                                books={read}
-                                onShelfChanged={(books, newShelf) => this.onShelfChangedHandler(books, newShelf)}/>
-                        )}
+                        ))}
                     </div>
-                </div>
+                )}
                 <Link
                     to='/search'
                     className="open-search"

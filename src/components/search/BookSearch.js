@@ -8,7 +8,6 @@ class BookSearch extends Component {
         searchKeyword: '',
         result: [],
     };
-    timeout = null;
 
     searchBooks(keyword) {
         if (keyword && keyword.trim().length > 0) {
@@ -52,25 +51,8 @@ class BookSearch extends Component {
 
     onTextChangeHandler = (event) => {
         const searchKeyword = event.target.value;
-
-        const cachedKeyword = this.state.searchKeyword ? this.state.searchKeyword.trim().toLowerCase() : '';
-        const trimmedNewKeyword = searchKeyword.trim().toLowerCase();
-
         this.setState({searchKeyword: searchKeyword});
-
-        /* Check if the new search keyword is not equal to the current one, if it is ignore the call*/
-        if (cachedKeyword !== trimmedNewKeyword) {
-
-            /* Clear previous timeout to avoid unwanted http request as the user is still typing. */
-            if (this.timeout !== null) {
-                console.log('Clearing timeout');
-                clearTimeout(this.timeout);
-            }
-
-            /* Set a timeout of 600 ms to let user type the whole query phrase before hitting the http request.
-             This will avoid the potential overlapping of unwanted http requests. */
-            this.timeout = setTimeout(() => this.searchBooks(trimmedNewKeyword), 600);
-        }
+        this.searchBooks(searchKeyword);
     };
 
     onShelfChangedHandler = (book, newShelf) => {
