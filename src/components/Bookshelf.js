@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 
 const Bookshelf = ({title, books, onShelfChanged}) => {
     const onShelfChangedHandler = (book, newShelf) => {
-        console.log('onShelfCHanged');
         onShelfChanged(book, newShelf);
     };
 

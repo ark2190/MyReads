@@ -19,7 +19,6 @@ class BookSearch extends Component {
                         if (this.state.searchKeyword === keyword) {
                             const result = this.associateShelfWithBooks(response);
                             this.setState({result: result});
-                            console.log('result', this.state.result);
                         }
                     }
                 })

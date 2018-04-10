@@ -10,8 +10,6 @@ import PropTypes from 'prop-types'
 const Book = ({book, onShelfChanged}) => {
     const onShelfChangeHandler = (event) => {
         const newShelf = event.target.value;
-        console.log(book.shelf);
-        console.log(newShelf);
         /* Check if the shelf is actually changed. If it is pass on the callback to onShelfChanged else ignore */
         if (newShelf !== book.shelf) {
             onShelfChanged(book, newShelf);
