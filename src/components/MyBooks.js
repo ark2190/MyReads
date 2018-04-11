@@ -55,8 +55,8 @@ class MyBooks extends Component {
     render() {
         const shelves = [
             {title: 'Currently Reading', shelf: 'currentlyReading', books: this.state.currentlyReading},
-            {title: 'Want To Read', shelf: 'wantToRead', books: this.state.currentlyReading},
-            {title: 'Read', shelf: 'read', books: this.state.currentlyReading}
+            {title: 'Want To Read', shelf: 'wantToRead', books: this.state.wantToRead},
+            {title: 'Read', shelf: 'read', books: this.state.read}
         ];
 
         return (
